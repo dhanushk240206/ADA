@@ -1,0 +1,81 @@
+#include <stdio.h>
+#include <stdbool.h>
+
+#define MAX 20
+
+int board[MAX][MAX];
+bool solutionFound = false;
+
+void printBoard(int n) {
+    for (int i = 0; i < n; i++) {
+        for (int j = 0; j < n; j++) {
+            printf("%d ", board[i][j]);
+        }
+        printf("\n");
+    }
+    printf("\n");
+}
+
+bool isSafe(int row, int col, int n) {
+    int i, j;
+
+    for (i = 0; i < row; i++) {
+        if (board[i][col] == 1) return false;
+    }
+
+    for (i = row - 1, j = col - 1; i >= 0 && j >= 0; i--, j--) {
+        if (board[i][j] == 1) return false;
+    }
+
+    for (i = row - 1, j = col + 1; i >= 0 && j < n; i--, j++) {
+        if (board[i][j] == 1) return false;
+    }
+
+    return true;
+}
+
+void solveNQueens(int row, int n) {
+    if (solutionFound) return;
+
+    if (row == n) {
+        printf("Solution found:\n");
+        printBoard(n);
+        solutionFound = true;
+        return;
+    }
+
+    for (int col = 0; col < n; col++) {
+        if (isSafe(row, col, n)) {
+            board[row][col] = 1;
+            printf("Placed queen at row %d, col %d:\n", row, col);
+            printBoard(n);
+
+            solveNQueens(row + 1, n);
+
+            if (solutionFound) return;
+
+            board[row][col] = 0;
+            printf("Backtracking from row %d, col %d:\n", row, col);
+            printBoard(n);
+        }
+    }
+}
+
+int main() {
+    int n;
+    printf("Enter the value of n for the N-Queens problem: ");
+    scanf("%d", &n);
+
+    for (int i = 0; i < n; i++)
+        for (int j = 0; j < n; j++)
+            board[i][j] = 0;
+
+    printf("Starting backtracking process:\n");
+    solveNQueens(0, n);
+
+    if (!solutionFound) {
+        printf("No solution exists for n = %d\n", n);
+    }
+
+    return 0;
+}
